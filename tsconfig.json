@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["src/*"],
+      "@_types/*": ["types/*"]
+    }
+  },
+  "include": ["./types/**/*", "./**/*.ts"],
+  "exclude": ["node_modules/**/*"]
+}

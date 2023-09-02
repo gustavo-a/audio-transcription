@@ -1,6 +1,12 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 import readline from 'node:readline/promises'
-import path from 'node:path'
-import fs from 'node:fs'
+import transcribe from '@/transcribe'
+
+import type { TranscribeOptions } from '@_types/global'
+
+//
 ;(async () => {
   const rl = readline.createInterface({
     input: process.stdin,
@@ -9,22 +15,21 @@ import fs from 'node:fs'
 
   try {
     // NOTE: the second parameter (the timeout) is optional.
-    const answer = await rl.question('Path to the audio file ', {
-      signal: AbortSignal.timeout(10_000) // 10s timeout
+    const filePath = await rl.question('Path to the audio file: ')
+    const prompt = await rl.question('Prompt: ')
+    const language = await rl.question('Language: ')
+    const temperature = await rl.question('Temperature: ')
+    const responseFormat = await rl.question('Output format: ')
+
+    const transcribedText = await transcribe({
+      filePath,
+      prompt,
+      language,
+      temperature,
+      responseFormat: responseFormat as TranscribeOptions['responseFormat']
     })
 
-    const filePath = path.resolve(answer)
-
-    switch (answer.toLowerCase()) {
-      case 'y':
-        console.log('Super!')
-        break
-      case 'n':
-        console.log('Sorry! :(')
-        break
-      default:
-        console.log('Invalid answer!')
-    }
+    console.log('Transcription:', transcribedText)
   } finally {
     rl.close()
   }
