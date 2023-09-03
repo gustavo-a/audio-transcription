@@ -1,8 +1,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { CreateOutputOptions } from '@_types/global'
-
 /**
  * This function creates a new file in the `output` directory.
  * The file will have the chosen file type and the transcribed audio content.d

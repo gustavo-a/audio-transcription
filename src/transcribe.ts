@@ -6,9 +6,8 @@ import api from '@/api'
 import splitAudio from '@/split'
 
 import { AxiosError } from 'axios'
-import { ITranscribe, ITranscriptionResponse } from '@_types/global'
 
-const transcribe: ITranscribe = async opts => {
+const transcribe = async (opts: TranscribeOptions) => {
   try {
     const resolvedPath = path.resolve(opts.filePath)
 

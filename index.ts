@@ -6,8 +6,6 @@ import readline from 'node:readline/promises'
 import transcribe from '@/transcribe'
 import createOutput from '@/output'
 
-import type { TranscribeOptions } from '@_types/global'
-
 //
 ;(async () => {
   const rl = readline.createInterface({
