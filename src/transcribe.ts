@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import FormData from 'form-data'
 
 import api from '@/api'
+import splitAudio from '@/split'
 
 import { AxiosError } from 'axios'
 import { ITranscribe, ITranscriptionResponse } from '@_types/global'
@@ -15,31 +16,44 @@ const transcribe: ITranscribe = async opts => {
       throw new Error(`File not found: ${resolvedPath}`)
     }
 
-    const audioFile = fs.readFileSync(resolvedPath)
+    const chunkPaths = await splitAudio(resolvedPath, 20)
 
-    const form = new FormData()
+    const textPieces = ['']
 
-    form.append('model', 'whisper-1')
+    // Envia cada chunk para transcrição
+    for (const chunkPath of chunkPaths) {
+      const audioFile = fs.readFileSync(chunkPath)
 
-    for (const [key, value] of Object.entries(opts)) {
-      if (key === 'filePath') continue
+      console.log(`Transcribing chunk: ${chunkPath}`)
 
-      form.append(key, value)
+      const form = new FormData()
+
+      form.append('model', 'whisper-1')
+
+      for (const [key, value] of Object.entries(opts)) {
+        if (key === 'filePath') continue
+
+        form.append(key, value)
+      }
+
+      form.append('file', audioFile, { filename: 'audio.ogg' })
+
+      const response = await api.post<ITranscriptionResponse>(
+        '/audio/transcriptions',
+        form,
+        {
+          headers: {
+            ...form.getHeaders()
+          }
+        }
+      )
+
+      console.log('Transcribed successfully\n\n')
+
+      textPieces.push(response.data.text)
     }
 
-    form.append('file', audioFile, { filename: 'audio.ogg' })
-
-    const response = await api.post<ITranscriptionResponse>(
-      '/audio/transcriptions',
-      form,
-      {
-        headers: {
-          ...form.getHeaders()
-        }
-      }
-    )
-
-    return response.data.text
+    return textPieces
   } catch (error) {
     if (error instanceof AxiosError) {
       console.error(

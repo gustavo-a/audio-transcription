@@ -2,7 +2,9 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 import readline from 'node:readline/promises'
+
 import transcribe from '@/transcribe'
+import createOutput from '@/output'
 
 import type { TranscribeOptions } from '@_types/global'
 
@@ -26,10 +28,15 @@ import type { TranscribeOptions } from '@_types/global'
       prompt,
       language,
       temperature,
-      responseFormat: responseFormat as TranscribeOptions['responseFormat']
+      response_format: responseFormat as TranscribeOptions['response_format']
     })
 
-    console.log('Transcription:', transcribedText)
+    if (!transcribedText) return
+
+    createOutput({
+      content: transcribedText,
+      outputType: responseFormat as TranscribeOptions['response_format']
+    })
   } finally {
     rl.close()
   }
