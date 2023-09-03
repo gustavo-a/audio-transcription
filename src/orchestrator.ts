@@ -1,6 +1,7 @@
 import readline from 'node:readline/promises'
 
 import transcribe from '@/transcribe'
+import formatAndValidate from '@/input'
 import createOutput from '@/output'
 
 //
@@ -18,19 +19,21 @@ const init = async () => {
     const temperature = await rl.question('Temperature: ')
     const responseFormat = await rl.question('Output format: ')
 
-    const transcribedText = await transcribe({
+    const input = formatAndValidate({
       filePath,
       prompt,
       language,
       temperature,
-      response_format: responseFormat as TranscribeOptions['response_format']
+      responseFormat
     })
+
+    const transcribedText = await transcribe(input)
 
     if (!transcribedText) return
 
     createOutput({
       content: transcribedText,
-      outputType: responseFormat as TranscribeOptions['response_format']
+      outputType: input.responseFormat
     })
   } finally {
     rl.close()
