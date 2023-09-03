@@ -12,7 +12,6 @@ const init = async () => {
   })
 
   try {
-    // NOTE: the second parameter (the timeout) is optional.
     const filePath = await rl.question('Path to the audio file: ')
     const prompt = await rl.question('Prompt: ')
     const language = await rl.question('Language: ')

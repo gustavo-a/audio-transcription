@@ -14,7 +14,7 @@ const formatAndValidate = (opts: InputOptions) => {
     throw new Error(`Invalid temperature: ${opts.temperature}`)
   }
 
-  // stay between 0 and 1
+  // Stay between 0 and 1
   const formattedTemperature =
     Number(opts.temperature) > 1
       ? 1
@@ -22,7 +22,7 @@ const formatAndValidate = (opts: InputOptions) => {
       ? 0
       : Number(opts.temperature)
 
-  // validate language code
+  // Validate language code
   if (opts.language && ISO6391.validate(opts.language) === false) {
     throw new Error(`Invalid language code: ${opts.language}`)
   }

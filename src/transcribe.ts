@@ -3,15 +3,13 @@ import fs from 'node:fs'
 import api from '@/api'
 import splitAudio from '@/split'
 
-import { AxiosError } from 'axios'
-
 const transcribe = async (opts: TranscribeOptions) => {
   try {
     const chunkPaths = await splitAudio(opts.filePath, 20)
 
     const textPieces = []
 
-    // Envia cada chunk para transcrição
+    // Send each chunk to transcribe
     for (const chunkPath of chunkPaths) {
       const audioFile = fs.createReadStream(chunkPath)
 
@@ -40,13 +38,7 @@ const transcribe = async (opts: TranscribeOptions) => {
 
     return textPieces
   } catch (error) {
-    if (error instanceof AxiosError) {
-      console.error(
-        `Error transcribing audio file:\n${error.message}, status: ${error.response?.status}`
-      )
-    } else {
-      console.error('Error transcribing audio file: \n', error)
-    }
+    console.error('Error transcribing audio file: \n', error)
   }
 }
 
